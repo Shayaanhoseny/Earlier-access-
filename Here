@@ -1,0 +1,98 @@
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+local player = game.Players.LocalPlayer
+
+local Window = OrionLib:MakeWindow({
+    Name = "by Humbled_fan",
+    HidePremium = false,
+    Introtext = "by humbled_fan!",
+    SaveConfig = true,
+    ConfigFolder = "by humbled_fan"
+})
+
+local TutTab = Window:MakeTab({
+    Name = "Tab 1",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local jumpPowerEnabled = false
+
+local function toggleJumpPower()
+    jumpPowerEnabled = not jumpPowerEnabled
+    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+    
+    if humanoid then
+        humanoid.JumpPower = jumpPowerEnabled and 100 or 50 -- Adjust the jump power values as needed
+        print(jumpPowerEnabled and "Higher Jump enabled" or "Higher Jump disabled")
+    end
+end
+
+local jumpPowerInput = TutTab:AddTextbox({
+    Name = "JumpPower Input",
+    Default = "50", -- Default value in the textbox
+    Callback = function(Value)
+        local newJumpPower = tonumber(Value)
+        if newJumpPower then
+            local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.JumpPower = newJumpPower
+                print("JumpPower set to", newJumpPower)
+            end
+        else
+            warn("Invalid input. Please enter a valid number.")
+        end
+    end
+})
+
+-- Modified toggle to include a name
+TutTab:AddToggle({
+    Name = "Toggle Higher Jump",
+    Default = false,
+    Callback = toggleJumpPower
+})
+
+-- Add text box for entering walk speed value before the button
+local walkSpeedInput = TutTab:AddTextbox({
+    Name = "WalkSpeed Input",
+    Default = "50",
+    Callback = function(Value)
+        -- You can add additional validation or processing here if needed
+    end
+})
+
+-- Add button for setting walk speed after the text box
+TutTab:AddButton({
+    Name = "Set WalkSpeed",
+    Callback = function()
+        local walkSpeedValue = tonumber(walkSpeedInput:GetValue())
+        if walkSpeedValue then
+            local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = walkSpeedValue
+                print("Walkspeed set to", walkSpeedValue)
+            end
+        else
+            warn("Invalid input. Please enter a valid number.")
+        end
+    end
+})
+
+TutTab:AddSlider({
+    Name = "WalkSpeed Slider",
+    Min = 1,
+    Max = 100,
+    Default = 50,
+    Color = Color3.fromRGB(192, 192, 192), -- Changed color to Silver
+    Increment = 1,
+    ValueName = "walkspeed",
+    Callback = function(Value)
+        local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+        
+        if humanoid and not jumpPowerEnabled then
+            humanoid.WalkSpeed = Value
+            print("Walkspeed changed to", Value)
+        end
+    end
+})
+
+OrionLib:Init()
